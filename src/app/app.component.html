@@ -1,0 +1,35 @@
+<div id="map" style="height: 300px;">
+
+</div>
+
+  <button (click)="saveCoordinates()">Find Central Coordinates</button>
+
+  <button (click)="downloadDataAsJson()">Download Data as JSON</button>
+
+  <p *ngIf="centralCoordinates">Central Coordinates: {{ centralCoordinates }}</p>
+
+  <p *ngIf="currentDate">Current Date: {{ (currentDate) }}</p>
+
+  <hr>
+
+  <p *ngIf="storedData.length === 0">No coordinates</p>
+
+  <div *ngIf="storedData.length > 0">
+
+    <p>Coordinates:</p>
+
+      <ul>
+
+        <li *ngFor="let data of storedData; let i = index">
+
+          Coordinate: {{ data.coordinates }}, Date: {{ data.date }}
+
+          <button (click)="showMarkerOnMap(data.coordinates, true, i)">Delete</button>
+
+          <button (click)="showMarkerOnMap(data.coordinates)">Show on Map</button>
+
+        </li>
+
+      </ul>
+
+  </div>
