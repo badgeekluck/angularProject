@@ -12,17 +12,17 @@
 
   <hr>
 
-  <p *ngIf="storedData.length === 0">No coordinates</p>
+  <p *ngIf="mapData.length === 0">No coordinates</p>
 
-  <div *ngIf="storedData.length > 0">
+  <div *ngIf="mapData.length > 0">
 
     <p>Coordinates:</p>
 
       <ul>
 
-        <li *ngFor="let data of storedData; let i = index">
+        <li *ngFor="let data of mapData; let i = index">
 
-          Coordinate: {{ data.coordinates }}, Date: {{ data.date }}
+          ID: {{ data.id }}, Coordinates: {{ data.coordinates }}, Date: {{ data.date | date: 'medium' }}
 
           <button (click)="showMarkerOnMap(data.coordinates, true, i)">Delete</button>
 

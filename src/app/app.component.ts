@@ -20,11 +20,15 @@ export class AppComponent implements OnInit {
   map: any;
   centralCoordinates: string = '';
   currentDate: string = '';
-  storedData: { coordinates: string, date: string }[] = [];
+  mapData: { id: number, coordinates: string, date: string }[] = [];
   markers: any[] = [];
+  counterForId: number = 0;
 
   ngOnInit() {
+
+    // istanbul location
     this.map = L.map('map').setView([41.015137, 28.979530], 13);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
@@ -41,9 +45,9 @@ export class AppComponent implements OnInit {
 
     this.currentDate = new Date().toLocaleString();
 
-    this.storedData.push({ coordinates: this.centralCoordinates, date: this.currentDate });
+    this.mapData.push({ id: ++this.counterForId, coordinates: this.centralCoordinates, date: this.currentDate });
 
-    localStorage.setItem('storedData', JSON.stringify(this.storedData));
+    localStorage.setItem('storedData', JSON.stringify(this.mapData));
   }
 
   getDataFromStorage() {
@@ -51,13 +55,14 @@ export class AppComponent implements OnInit {
     const storedData = JSON.parse(localStorage.getItem('storedData') || '[]');
 
     if (storedData.length > 0) {
-      this.storedData = storedData;
+      this.mapData = storedData;
     }
 
+    this.counterForId = Math.max(...this.mapData.map(data => data.id), 0);
   }
 
   downloadDataAsJson() {
-    const data = JSON.stringify(this.storedData);
+    const data = JSON.stringify(this.mapData);
     const dataType = new Blob([data], { type: 'application/json' });
     const url = window.URL.createObjectURL(dataType);
 
@@ -80,8 +85,8 @@ export class AppComponent implements OnInit {
     if (deleteCoordinate && index !== -1) {
 
       // coordinate delete
-      this.storedData.splice(index, 1);
-      localStorage.setItem('storedData', JSON.stringify(this.storedData));
+      this.mapData.splice(index, 1);
+      localStorage.setItem('storedData', JSON.stringify(this.mapData));
 
       // marker delete
       this.map.removeLayer(this.markers[index]);
@@ -90,7 +95,7 @@ export class AppComponent implements OnInit {
   }
 
   createMarker() {
-    this.storedData.forEach(data => {
+    this.mapData.forEach(data => {
       const [lat, lng] = data.coordinates.split(',').map(parseFloat);
       const marker = L.marker([lat, lng]).addTo(this.map);
       this.markers.push(marker);
